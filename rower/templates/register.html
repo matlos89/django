@@ -1,0 +1,39 @@
+{% extends "base2.html" %}
+
+{% block content %}
+  <h2>Rejestracja</h2><p></p>
+  <form action="" method="post">
+  {% csrf_token %}
+  {% if form.errors %}<p>Proszę o poprawienie podanych pól:</p>{% endif %}
+  <div class="register_div">
+    {% if form.username.errors %}<p class="errors">{{form.username.errors}}</p>{% endif %}
+    <p><label for="username"{% if form.username.errors %} class="error" {% endif %}>Nazwa użytkownika:</label></p>
+    <p>{{form.username}}</p>
+  </div>
+  
+  <div class="register_div">
+    {% if form.email.errors %}<p class="error">{{form.email.errors }}</p>{% endif %}
+    <p><label for="email"{% if form.email.errors %} class="error" {% endif %}>Adres email:</label></p>
+    <p>{{form.email}}</p>
+  </div>
+
+  <div class="register_div">
+    {% if form.plec.errors %}<p class="error">{{form.plec.errors }}</p>{% endif %}
+    <p><label for="plec"{% if form.plec.errors %} class="error" {% endif %}>Płeć:</label></p>
+    <p>{{form.plec}}</p>
+  </div>
+
+  <div class="register_div">
+    {% if form.password.errors %}<p class="error">{{form.password.errors }}</p>{% endif %}
+    <p><label for="password"{% if form.password.errors %} class="error" {% endif %}>Hasło:</label></p>
+    <p>{{form.password}}</p>
+  </div>
+
+  <div class="register_div">
+    {% if form.password1.errors %}<p class="error">{{form.password1.errors }}</p>{% endif %}
+    <p><label for="password1"{% if form.password1.errors %} class="error" {% endif %}>Powtórz hasło:</label></p>
+    <p>{{form.password1}}</p>
+  </div>
+  <p><input type="submit" alt="register"/></p>
+  </form>
+{% endblock %}
