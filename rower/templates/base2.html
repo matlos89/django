@@ -22,27 +22,25 @@
       <div id="menubar">
         <ul id="menu">
           <!-- put class="selected" in the li tag for the selected page - to highlight which page you're on -->
+   {% if user.is_authenticated %}
           <li class="selected"><a href="index.html">Newsy</a></li>
           <li><a href="examples.html">Dodaj wycieczkę</a></li>
-          <li><a href="page.html">Moje wycieczki</a></li>
-          <li><a href="another_page.html"></a></li>
+          <li><a href="/wycieczki">Moje wycieczki</a></li>
+          <li><a href="/logout">Wyloguj się</a></li>
           <li><a href="contact.html">Kontakt</a></li>
+    {% else %}
+      <li><a href="login">Zaloguj się</a></li>
+      <li><a href="register">Zarejestruj się</a></li>
+      <li><a href="contact.html">Kontakt</a></li>
+    {% endif %}
         </ul>
       </div>
     </div>
     <div id="site_content">
       <div class="sidebar">
-      {% if user.is_authenticated %}
-	<p>Jesteś zalogowany</p>
-      {% else %}
-	  <form action="" method="post">
-  {% csrf_token %}
-	{{form}}
-	<p>Nie masz konta? <a href="register">Zarejestruj się</a></p>
-	<p><input type="submit" alt="register"/></p>
-	</form>
-      {% endif %}
-
+ {% if user.is_authenticated %}
+      <p>Jesteś zalogowany jako:{{User.username}}</p>
+ {% endif %}
       </div>
       <div id="content">
         {% block content %}

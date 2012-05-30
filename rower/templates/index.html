@@ -2,7 +2,7 @@
 
 {% block content %}
         {% for wpis in object_list %}
-            <h2><a href={{wpis.id}}>{{ wpis.tytul }}</a></h2>
+            <h2><a href=/wpis/{{wpis.id}}>{{ wpis.tytul }}</a></h2>
 	    <h5>{{ wpis.data }}</h5>
 	    <p>{{ wpis.opis }} </p>
         {% endfor %}

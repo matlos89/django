@@ -1,0 +1,9 @@
+{% extends "base2.html" %}
+
+{% block content %}
+        {% for wycieczka in object_list %}
+            <h2><a href=/wycieczka/{{wycieczka.id}}>{{ wycieczka.nazwa }}</a></h2>
+	    <h5>{{ wycieczka.data }}</h5>
+	    <p>{{ wycieczka.rower }} </p>
+        {% endfor %}
+{% endblock %}
