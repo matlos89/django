@@ -112,6 +112,8 @@ TEMPLATE_DIRS = (
 )
 
 AUTH_PROFILE_MODULE = 'rower.Uzytkownik'
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'index'
 
 INSTALLED_APPS = (
     'django.contrib.auth',

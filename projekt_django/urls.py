@@ -19,9 +19,12 @@ urlpatterns = patterns('',
     # Uncomment the next line to enable the admin:
     url(r'^admin/', include(admin.site.urls)),
     url(r'register', 'rower.views.UzytkownikRegistration'),
-    url(r'^(?P<pk>\d+)$', DetailView.as_view(model=Wpis, template_name='wpis.html')),
-    #url(r'^wycieczki', WycieczkiView.as_view()),
-    #url(r'', 'rower.views.LoginRequest'),
-    #url(r'', 'rower.views.IndexView'),
-    url(r'', IndexView.as_view()),
+    url(r'^wpis/(?P<pk>\d+)$', DetailView.as_view(model=Wpis, template_name='wpis.html')),
+    url(r'^wycieczka/(?P<pk>\d+)$', DetailView.as_view(model=Wycieczka, template_name='wycieczka.html')),
+    url(r'index', IndexView.as_view()),
+    url(r'wycieczki', WycieczkiView.as_view()),
+    url(r'logout', 'rower.views.LogoutRequest'),
+    url(r'dodaj_wycieczke', 'rower.views.DodajWycieczke'),
+    url(r'', 'rower.views.LoginRequest'),
+    
 )

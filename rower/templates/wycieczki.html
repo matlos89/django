@@ -3,7 +3,6 @@
 {% block content %}
         {% for wycieczka in object_list %}
             <h2><a href=/wycieczka/{{wycieczka.id}}>{{ wycieczka.nazwa }}</a></h2>
-	    <h5>{{ wycieczka.data }}</h5>
-	    <p>{{ wycieczka.rower }} </p>
+	    <h5>{{wycieczka.km}} km, {{wycieczka.rower}}, {{ wycieczka.data }}</h5>
         {% endfor %}
 {% endblock %}

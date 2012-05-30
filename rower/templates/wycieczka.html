@@ -2,8 +2,12 @@
 
 {% block content %}
 <h2>{{object.tytul}}</h2>
-	    <h5>{{ object.nazwa }}</h5>
-	    <p>{{ object.opis }} </p>
+	    <h2>{{ object.nazwa }}</h2>
+	    <p>Autor: {{object.autor}}</p>
+	    <p>Data: {{object.data}}</p>
+	    <p>Rower: {{object.rower}}</p>
+	    <p>Dystans: {{object.km}} km</p>
+	    <p>Opis:</p><p>{{ object.opis }} </p>
 
 <h4 class="powrot"><a href="/wycieczki">Powrót</a><h4>
 

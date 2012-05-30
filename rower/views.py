@@ -6,8 +6,23 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from rower.forms import *
 from rower.models import *
-from django.contrib.auth import *
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
 
+
+def DodajWycieczke(request):
+  if request.method == 'POST':
+    form = DodajWycieczkeForm(request.POST)
+    if form.is_valid():
+      pass
+    else:
+      return render_to_response('dodaj_wycieczke.html', {'form': form}, context_instance=RequestContext(request))
+  else:
+    form = DodajWycieczkeForm()
+    context = {'form': form}
+    return render_to_response('dodaj_wycieczke.html', context, context_instance=RequestContext(request))
+  
 def UzytkownikRegistration(request):
   if request.user.is_authenticated():
     return HttpResponseRedirect('/profile/')
@@ -33,7 +48,7 @@ def UzytkownikRegistration(request):
 
 def LoginRequest(request):
   if request.user.is_authenticated():
-    return HttpResponseRedirect('/profile/')
+    return HttpResponseRedirect('index.html')
   if request.method == 'POST':
     form = LoginForm(request.POST)
     if form.is_valid():
@@ -42,19 +57,34 @@ def LoginRequest(request):
       user = authenticate(username=username, password=password)
       if user is not None:
 	login(request, user)
-	return HttpResponseRedirect('/profile/')
+	return HttpResponseRedirect('index.html')
       else:
-	return HttpResponseRedirect('/login/')
+	return render_to_response('login.html', context, context_instance=RequestContext(request))
     else:
-      return render_to_response('index.html', context, context_instance=RequestContext(request))
+      return render_to_response('login.html', context, context_instance=RequestContext(request))
   else:
     form = LoginForm()
     context = {'form': form}
-    return render_to_response('index.html', context, context_instance=RequestContext(request))
+    return render_to_response('login.html', context, context_instance=RequestContext(request))
     
+def LogoutRequest(request):
+  logout(request)
+  return HttpResponseRedirect('/')
+
 class IndexView(ListView):
   template_name="index.html"
-  queryset = Wpis.objects.all().order_by('-data')    
+  queryset = Wpis.objects.all().order_by('-data') 
+  
+  @method_decorator(login_required)
+  def dispatch(self, *args, **kwargs):
+    return super(IndexView, self).dispatch(*args, **kwargs)
 
+class WycieczkiView(ListView):
+  template_name="wycieczki.html"
+  queryset = Wycieczka.objects.all().order_by('-data')
+  
+  @method_decorator(login_required)
+  def dispatch(self, *args, **kwargs):
+    return super(WycieczkiView, self).dispatch(*args, **kwargs)
     
   

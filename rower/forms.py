@@ -32,5 +32,10 @@ class LoginForm(forms.Form):
   username = forms.CharField(label=(u'Nazwa uzytkownika'))
   password = forms.CharField(label=(u'Haslo'), widget=forms.PasswordInput(render_value=False))
   
-
+class DodajWycieczkeForm(ModelForm):
+  nazwa = forms.CharField(label=(u'Nazwa'))
+  
+  class Meta:
+    model = Wycieczka
+  
 	 

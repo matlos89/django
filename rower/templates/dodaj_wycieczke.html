@@ -1,0 +1,11 @@
+{% extends "base2.html" %}
+
+{% block content %}
+  <h2>Nowa wycieczka</h2><p></p>
+  <form action="" method="post">
+  {% csrf_token %}
+  {% if form.errors %}<p>Proszę o poprawienie podanych pól:</p>{% endif %}
+  {{form.as_p}}
+  <p><input type="submit" alt="register"/></p>
+  </form>
+{% endblock %}
