@@ -39,7 +39,8 @@
     <div id="site_content">
       <div class="sidebar">
  {% if user.is_authenticated %}
-      <p>Jesteś zalogowany jako:{{User.username}}</p>
+      <p>Jesteś zalogowany jako: {{user.username}}</p>
+      
  {% endif %}
       </div>
       <div id="content">

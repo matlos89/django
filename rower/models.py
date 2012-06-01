@@ -38,7 +38,7 @@ class Wycieczka(models.Model):
   rower = models.ForeignKey('Rower')
   km = models.IntegerField()
   data = models.DateField()
-  opis = models.CharField(max_length=200, blank=True)
+  opis = models.TextField(max_length=200, blank=True)
   
   class Meta:
     verbose_name = "Wycieczka"

@@ -33,9 +33,9 @@ class LoginForm(forms.Form):
   password = forms.CharField(label=(u'Haslo'), widget=forms.PasswordInput(render_value=False))
   
 class DodajWycieczkeForm(ModelForm):
-  nazwa = forms.CharField(label=(u'Nazwa'))
-  
+  opis = forms.CharField(label=(u'Opis'), widget=forms.Textarea)
   class Meta:
     model = Wycieczka
+    exclude = ('autor',)
   
 	 
