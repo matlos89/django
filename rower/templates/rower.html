@@ -1,0 +1,16 @@
+{% extends "base2.html" %}
+
+{% block content %}
+<h2>{{object.tytul}}</h2>
+	    <h2>{{ object.nazwa }}</h2>
+	    <p>Producent: {{object.producent}}</p>
+	    <p>Model: {{object.model}}</p>
+	    <p>Typ: {{object.typ}}</p>
+	    <p>Przebieg: {{object.przebieg}} km</p>
+	    <p>Opis:</p><p>{{ object.opis }} </p>
+
+<h4 class="powrot"><a href=/rower/edycja/{{rower.id}}>Edycja</a> <a href=/rower/usun/{{rower.id}}>Usuń</a></h4>
+<h4 class="powrot"> <a href="/rowery">Powrót</a><h4>
+
+{% endblock %}
+

@@ -15,13 +15,41 @@ import datetime
 #Usuwanie wycieczki
 @login_required
 def UsunWycieczke(request, pk):
-  Wycieczka.objects.get(pk=pk).delete()
+  wycieczka_do_usuniecia = Wycieczka.objects.get(pk=pk)
+  rower = Rower.objects.get(pk = wycieczka_do_usuniecia.rower.pk)
+  rower.przebieg = rower.przebieg - wycieczka_do_usuniecia.km
+  rower.save()
+  wycieczka_do_usuniecia.delete()
   return HttpResponseRedirect('wycieczki')
   
+#Funkcja edycji wycieczki
 @login_required
 def EdytujWycieczke(request, pk):
-  return HttpResponseRedirect('wycieczki')
-  
+  if request.method == 'POST':
+    form = DodajWycieczkeForm(request.POST)
+    if form.is_valid():
+      edytowana = Wycieczka.objects.get(pk=pk)
+      rower = Rower.objects.get(pk = edytowana.rower.pk)
+      dawny_przebieg = rower.przebieg
+      dawne_km = edytowana.km
+      edytowana.nazwa = form.cleaned_data['nazwa']
+      edytowana.rower = form.cleaned_data['rower']
+      edytowana.km = form.cleaned_data['km']
+      edytowana.data = form.cleaned_data['data']
+      edytowana.opis = form.cleaned_data['opis']
+      edytowana.save()
+      nowy = dawny_przebieg - dawne_km
+      rower.przebieg = nowy + edytowana.km
+      rower.save()
+      return HttpResponseRedirect('wycieczki')
+    else:
+      return render_to_response('edytuj_wycieczke.html', {'form': form, 'pk': pk}, context_instance=RequestContext(request))
+  else:
+    edytowana = Wycieczka.objects.get(pk=pk)
+    form = DodajWycieczkeForm({'nazwa': edytowana.nazwa, 'rower': edytowana.rower, 'km':edytowana.km, 'data': edytowana.data, 'opis': edytowana.opis})
+    context = {'form': form}
+    return render_to_response('edytuj_wycieczke.html', {'form': form}, context_instance=RequestContext(request))
+
 #Funkcja dodawania wycieczki
 @login_required
 def DodajWycieczke(request):
@@ -30,6 +58,11 @@ def DodajWycieczke(request):
     if form.is_valid():
       nowa_wycieczka = Wycieczka(autor = Uzytkownik.objects.get(nick=request.user.username), rower=form.cleaned_data['rower'], km = form.cleaned_data['km'], nazwa = form.cleaned_data['nazwa'], data=form.cleaned_data['data'])
       nowa_wycieczka.save()
+      #Dodawanie przebiegu do rowera
+      rower = Rower.objects.get(pk = nowa_wycieczka.rower.pk)
+      dawny = rower.przebieg
+      rower.przebieg = dawny + form.cleaned_data['km']
+      rower.save()
       #mozna dorobic dopisywanie wpisow po wpisaniu nowej wycieczki
       #problem - jak nadac format zwracanej daty z now() ?
       #nowy_wpis = Wpis(tytul=nowa_wycieczka.nazwa, data=datetime.datetime.now('YYYY-MM-DD'), opis='Uzytkownik '+request.user.username+' dodal nowa wycieczke')
@@ -42,6 +75,51 @@ def DodajWycieczke(request):
     context = {'form': form}
     return render_to_response('dodaj_wycieczke.html', context, context_instance=RequestContext(request))
 
+#Usuwanie rowera
+@login_required
+def UsunRower(request, pk):
+  Rower.objects.get(pk=pk).delete()
+  return HttpResponseRedirect('rowery')    
+    
+#Funkcja dodajaca rower
+@login_required    
+def DodajRower(request):
+  if request.method == 'POST':
+    form = DodajRowerForm(request.POST)
+    if form.is_valid():
+      nowy_rower = Rower(nazwa = form.cleaned_data['nazwa'], producent = form.cleaned_data['producent'], model = form.cleaned_data['model'], typ = form.cleaned_data['typ'], przebieg = form.cleaned_data['przebieg'], opis = form.cleaned_data['opis'], wlasciciel = Uzytkownik.objects.get(nick=request.user.username))
+      nowy_rower.save()
+      return HttpResponseRedirect('rowery')
+    else:
+      return render_to_response('dodaj_rower.html', {'form': form}, context_instance=RequestContext(request))
+  else:
+    form = DodajRowerForm()
+    return render_to_response('dodaj_rower.html', {'form': form}, context_instance=RequestContext(request))
+
+#Edycja roweru
+@login_required
+def EdytujRower(request, pk):
+  if request.method == 'POST':
+    form = DodajRowerForm(request.POST)
+    if form.is_valid():
+      edytowany = Rower.objects.get(pk=pk)
+      edytowany.nazwa = form.cleaned_data['nazwa']
+      edytowany.producent = form.cleaned_data['producent']
+      edytowany.model = form.cleaned_data['model']
+      edytowany.typ = form.cleaned_data['typ']
+      edytowany.przebieg = form.cleaned_data['przebieg']
+      edytowany.opis = form.cleaned_data['opis']
+      edytowany.save()
+      return HttpResponseRedirect('rowery')
+    else:
+      return render_to_response('edytuj_rower.html', {'form': form, 'pk': pk}, context_instance=RequestContext(request))
+  else:
+    edytowany = Rower.objects.get(pk=pk)
+    form = DodajRowerForm({'nazwa': edytowany.nazwa, 'producent': edytowany.producent, 'model':edytowany.model, 'typ': edytowany.typ, 'opis': edytowany.opis, 'przebieg': edytowany.przebieg})
+    context = {'form': form}
+    return render_to_response('edytuj_rower.html', {'form': form}, context_instance=RequestContext(request))
+        
+    
 #Funkcja do rejestracji uzytkownika
 def UzytkownikRegistration(request):
   if request.user.is_authenticated():
@@ -106,7 +184,7 @@ class IndexView(ListView):
   def dispatch(self, *args, **kwargs):
     return super(IndexView, self).dispatch(*args, **kwargs)
 
-#Fukcja wyswietlania wycieczek zalogowanego usera    
+#Funkcja wyswietlania wycieczek zalogowanego usera    
 class WycieczkiView(ListView):
   template_name="wycieczki.html"
   
@@ -115,3 +193,11 @@ class WycieczkiView(ListView):
     self.queryset = Wycieczka.objects.filter(autor=Uzytkownik.objects.get(nick=request.user.username))
     return super(WycieczkiView, self).dispatch(request, *args, **kwargs)
 
+#Funkcja wyswietlania rowerow uzytkownika
+class RoweryView(ListView):
+  template_name="rowery.html"
+  
+  @method_decorator(login_required)
+  def dispatch(self,request, *args, **kwargs):
+    self.queryset = Rower.objects.filter(wlasciciel=Uzytkownik.objects.get(nick=request.user.username))
+    return super(RoweryView, self).dispatch(request, *args, **kwargs)

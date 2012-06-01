@@ -37,5 +37,11 @@ class DodajWycieczkeForm(ModelForm):
   class Meta:
     model = Wycieczka
     exclude = ('autor',)
-  
+
+    
+class DodajRowerForm(ModelForm):
+  opis = forms.CharField(label=(u'Opis'), widget=forms.Textarea)
+  class Meta:
+    model = Rower
+    exclude = ('wlasciciel', )
 	 
