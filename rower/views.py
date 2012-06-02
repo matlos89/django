@@ -63,10 +63,9 @@ def DodajWycieczke(request):
       dawny = rower.przebieg
       rower.przebieg = dawny + form.cleaned_data['km']
       rower.save()
-      #mozna dorobic dopisywanie wpisow po wpisaniu nowej wycieczki
-      #problem - jak nadac format zwracanej daty z now() ?
-      #nowy_wpis = Wpis(tytul=nowa_wycieczka.nazwa, data=datetime.datetime.now('YYYY-MM-DD'), opis='Uzytkownik '+request.user.username+' dodal nowa wycieczke')
-      #nowy_wpis.save()
+      #Dodawanie wpisu do glownej strony
+      nowy_wpis = Wpis(tytul=nowa_wycieczka.nazwa, data=datetime.datetime.today(), opis='Uzytkownik '+request.user.username+' dodal nowa wycieczke: '+nowa_wycieczka.nazwa+', dystans: '+nowa_wycieczka.km)
+      nowy_wpis.save()
       return HttpResponseRedirect('wycieczki')
     else:
       return render_to_response('dodaj_wycieczke.html', {'form': form}, context_instance=RequestContext(request))
@@ -180,7 +179,6 @@ class IndexView(ListView):
   template_name="index.html"
   queryset = Wpis.objects.all().order_by('-data') 
   
-  @method_decorator(login_required)
   def dispatch(self, *args, **kwargs):
     return super(IndexView, self).dispatch(*args, **kwargs)
 

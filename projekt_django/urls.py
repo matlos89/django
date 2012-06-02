@@ -33,6 +33,7 @@ urlpatterns = patterns('',
     url(r'^rower/(?P<pk>\d+)$', DetailView.as_view(model=Rower, template_name='rower.html')),
     url(r'index', IndexView.as_view()),
     url(r'logout', 'rower.views.LogoutRequest'),
-    url(r'', 'rower.views.LoginRequest'),
+    url(r'login', 'rower.views.LoginRequest'),
+    url(r'', IndexView.as_view()),
     
 )
