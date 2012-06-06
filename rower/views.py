@@ -19,8 +19,13 @@ def UsunWycieczke(request, pk):
   rower = Rower.objects.get(pk = wycieczka_do_usuniecia.rower.pk)
   rower.przebieg = rower.przebieg - wycieczka_do_usuniecia.km
   rower.save()
+  #Poprawa statystyk
+  statystyka = Statystyka.objects.get(user=wycieczka_do_usuniecia.autor)
+  statystyka.km = statystyka.km - wycieczka_do_usuniecia.km
+  statystyka.save()
+  #---------------------------------
   wycieczka_do_usuniecia.delete()
-  return HttpResponseRedirect('wycieczki')
+  return HttpResponseRedirect('wycieczki')  
   
 #Funkcja edycji wycieczki
 @login_required
@@ -41,6 +46,12 @@ def EdytujWycieczke(request, pk):
       nowy = dawny_przebieg - dawne_km
       rower.przebieg = nowy + edytowana.km
       rower.save()
+      #Poprawka statystyk
+      statystyka = Statystyka.objects.get(user=edytowana.autor)
+      statystyka.km = statystyka.km - dawne_km
+      statystyka.km = statystyka.km + edytowana.km
+      statystyka.save()
+      #--------------------------------------------------
       return HttpResponseRedirect('wycieczki')
     else:
       return render_to_response('edytuj_wycieczke.html', {'form': form, 'pk': pk}, context_instance=RequestContext(request))
@@ -54,30 +65,44 @@ def EdytujWycieczke(request, pk):
 @login_required
 def DodajWycieczke(request):
   if request.method == 'POST':
-    form = DodajWycieczkeForm(request.POST)
+    form = DodajWycieczkeForm(request.POST, request=request)
     if form.is_valid():
-      nowa_wycieczka = Wycieczka(autor = Uzytkownik.objects.get(nick=request.user.username), rower=form.cleaned_data['rower'], km = form.cleaned_data['km'], nazwa = form.cleaned_data['nazwa'], data=form.cleaned_data['data'])
+      uzytkownik = Uzytkownik.objects.get(nick=request.user.username)
+      nowa_wycieczka = Wycieczka(autor = uzytkownik, rower=form.cleaned_data['rower'], km = form.cleaned_data['km'], nazwa = form.cleaned_data['nazwa'], data=form.cleaned_data['data'])
       nowa_wycieczka.save()
       #Dodawanie przebiegu do rowera
       rower = Rower.objects.get(pk = nowa_wycieczka.rower.pk)
       dawny = rower.przebieg
       rower.przebieg = dawny + form.cleaned_data['km']
       rower.save()
+      #--------------------------------------------------
       #Dodawanie wpisu do glownej strony
-      nowy_wpis = Wpis(tytul=nowa_wycieczka.nazwa, data=datetime.datetime.today(), opis='Uzytkownik '+request.user.username+' dodal nowa wycieczke: '+nowa_wycieczka.nazwa+', dystans: '+nowa_wycieczka.km)
-      nowy_wpis.save()
+      #nowy_wpis = Wpis(tytul=nowa_wycieczka.nazwa, data=datetime.datetime.today(), opis='Uzytkownik '+request.user.username+' dodal nowa wycieczke: '+nowa_wycieczka.nazwa+', dystans: '+nowa_wycieczka.km)
+      #nowy_wpis.save()
+      #Dodowanie do statystyka
+      statystyka = Statystyka.objects.get(user=uzytkownik)
+      stare_km = statystyka.km
+      statystyka.km = stare_km + form.cleaned_data['km']
+      statystyka.save()
+      #-------------------------------------------
       return HttpResponseRedirect('wycieczki')
     else:
       return render_to_response('dodaj_wycieczke.html', {'form': form}, context_instance=RequestContext(request))
   else:
-    form = DodajWycieczkeForm()
+    form = DodajWycieczkeForm(request=request)
     context = {'form': form}
     return render_to_response('dodaj_wycieczke.html', context, context_instance=RequestContext(request))
 
 #Usuwanie rowera
 @login_required
 def UsunRower(request, pk):
-  Rower.objects.get(pk=pk).delete()
+  rower=Rower.objects.get(pk=pk)
+  #Wyzerowanie statystyk dla tego rowerka
+  statystyka = Statystyka.objects.get(user=rower.wlasciciel)
+  statystyka.km = statystyka.km - rower.przebieg
+  statystyka.save()
+  #-----------------------------------
+  rower.delete()
   return HttpResponseRedirect('rowery')    
     
 #Funkcja dodajaca rower
@@ -88,6 +113,13 @@ def DodajRower(request):
     if form.is_valid():
       nowy_rower = Rower(nazwa = form.cleaned_data['nazwa'], producent = form.cleaned_data['producent'], model = form.cleaned_data['model'], typ = form.cleaned_data['typ'], przebieg = form.cleaned_data['przebieg'], opis = form.cleaned_data['opis'], wlasciciel = Uzytkownik.objects.get(nick=request.user.username))
       nowy_rower.save()
+      #Dodawanie przebiegu do statystyk
+      if nowy_rower.przebieg != 0:
+	statystyka = Statystyka.objects.get(user=nowy_rower.wlasciciel)
+	stare_km = statystyka.km
+	statystyka.km = stare_km + nowy_rower.przebieg
+	statystyka.save()
+      #--------------------------------------------
       return HttpResponseRedirect('rowery')
     else:
       return render_to_response('dodaj_rower.html', {'form': form}, context_instance=RequestContext(request))
@@ -102,6 +134,7 @@ def EdytujRower(request, pk):
     form = DodajRowerForm(request.POST)
     if form.is_valid():
       edytowany = Rower.objects.get(pk=pk)
+      stare_km = edytowany.przebieg
       edytowany.nazwa = form.cleaned_data['nazwa']
       edytowany.producent = form.cleaned_data['producent']
       edytowany.model = form.cleaned_data['model']
@@ -109,6 +142,12 @@ def EdytujRower(request, pk):
       edytowany.przebieg = form.cleaned_data['przebieg']
       edytowany.opis = form.cleaned_data['opis']
       edytowany.save()
+      #Poprawa statystyk
+      statystyka = Statystyka.objects.get(user=edytowany.wlasciciel)
+      statystyka.km = statystyka.km - stare_km
+      statystyka.km = statystyka.km + edytowany.przebieg
+      statystyka.save()
+      #-------------------------------------------------
       return HttpResponseRedirect('rowery')
     else:
       return render_to_response('edytuj_rower.html', {'form': form, 'pk': pk}, context_instance=RequestContext(request))
@@ -133,10 +172,13 @@ def UzytkownikRegistration(request):
       uzytkownik.plec = form.cleaned_data['plec']
       uzytkownik.email = form.cleaned_data['email']
       uzytkownik.save()
+      #Tworzenie statystyk
+      statystyka = Statystyka(user=uzytkownik, km=0)
+      statystyka.save()
+      #-------------------------------------------
       return HttpResponseRedirect('registerSucc')
     else:
       return render_to_response('register.html', {'form': form}, context_instance=RequestContext(request))
-      
       
   else:
     form = RegistrationForm()
@@ -161,9 +203,11 @@ def LoginRequest(request):
 	login(request, user)
 	return HttpResponseRedirect('index.html')
       else:
-	return render_to_response('login.html', context, context_instance=RequestContext(request))
+	#return render_to_response('login.html', context, context_instance=RequestContext(request))
+	return HttpResponseRedirect('login.html')
     else:
-      return render_to_response('login.html', context, context_instance=RequestContext(request))
+      #return render_to_response('login.html', context, context_instance=RequestContext(request))
+      return HttpResponseRedirect('login.html')
   else:
     form = LoginForm()
     context = {'form': form}
@@ -199,3 +243,13 @@ class RoweryView(ListView):
   def dispatch(self,request, *args, **kwargs):
     self.queryset = Rower.objects.filter(wlasciciel=Uzytkownik.objects.get(nick=request.user.username))
     return super(RoweryView, self).dispatch(request, *args, **kwargs)
+
+#Statystki
+class StatystykiView(ListView):
+  template_name="statystyki.html"
+    
+  @method_decorator(login_required)
+  def dispatch(self, request, *args, **kwargs):
+    self.queryset = Statystyka.objects.all().order_by('-km')
+    return super(StatystykiView, self).dispatch(request, *args, **kwargs)
+    

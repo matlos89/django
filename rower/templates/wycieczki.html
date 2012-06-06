@@ -1,6 +1,9 @@
 {% extends "base2.html" %}
 
 {% block content %}
+	{% if object_list.count == 0  %}
+	<h2>Aktualnie nie masz żadnych wycieczek.</h2>
+	{% endif %}
         {% for wycieczka in object_list %}
             <h2><a href=/wycieczka/{{wycieczka.id}}>{{ wycieczka.nazwa }}</a></h2>
 	    <h5>{{wycieczka.km}} km, {{wycieczka.rower}}, {{ wycieczka.data }}</h5>

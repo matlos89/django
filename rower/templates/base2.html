@@ -24,28 +24,20 @@
           <!-- put class="selected" in the li tag for the selected page - to highlight which page you're on -->
 <li class="selected"><a href="index.html">Newsy</a></li>
    {% if user.is_authenticated %}
-          
           <li><a href="/dodaj_wycieczke">Dodaj wycieczkę</a></li>
           <li><a href="/wycieczki">Moje wycieczki</a></li>
 	  <li><a href="/dodaj_rower">Dodaj rower</a></li>
 	  <li><a href="/rowery">Moje rowery</a></li>
-          <li><a href="/logout">Wyloguj się</a></li>
-          <li><a href="contact.html">Kontakt</a></li>
-    {% else %}
+	  <li><a href="/statystyki">Statystyki</a></li>
+	  <li><a href="/logout">Wyloguj się</a></li>
+   {% else %}
       <li><a href="login">Zaloguj się</a></li>
       <li><a href="register">Zarejestruj się</a></li>
-      <li><a href="contact.html">Kontakt</a></li>
     {% endif %}
         </ul>
       </div>
     </div>
     <div id="site_content">
-      <div class="sidebar">
- {% if user.is_authenticated %}
-      <p>Jesteś zalogowany jako: {{user.username}}</p>
-      
- {% endif %}
-      </div>
       <div id="content">
         {% block content %}
 
@@ -53,8 +45,8 @@
       </div>
     </div>
     <div id="footer">
-      <p><a href="index.html">Home</a> | <a href="examples.html">Examples</a> | <a href="page.html">A Page</a> | <a href="another_page.html">Another Page</a> | <a href="contact.html">Contact Us</a></p>
-      <p>Copyright &copy; night_sky | <a href="http://validator.w3.org/check?uri=referer">HTML5</a> | <a href="http://jigsaw.w3.org/css-validator/check/referer">CSS</a> | <a href="http://www.html5webtemplates.co.uk">design from HTML5webtemplates.co.uk</a></p>
+      <p>Copyright &copy by Matlos89 and Nikon</p>
+<p>CSS Theme by: night_sky</p>
     </div>
   </div>
 </body>

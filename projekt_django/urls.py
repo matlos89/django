@@ -34,6 +34,7 @@ urlpatterns = patterns('',
     url(r'index', IndexView.as_view()),
     url(r'logout', 'rower.views.LogoutRequest'),
     url(r'login', 'rower.views.LoginRequest'),
+    url(r'statystyki', StatystykiView.as_view()),
     url(r'', IndexView.as_view()),
     
 )

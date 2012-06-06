@@ -1,6 +1,9 @@
 {% extends "base2.html" %}
 
 {% block content %}
+	{% if object_list.count == 0  %}
+	<h2>Aktualnie nie masz żadnych rowerów.</h2>
+	{% endif %}
         {% for rower in object_list %}
             <h2><a href=/rower/{{rower.id}}>{{ rower.nazwa }}</a></h2>
 	    <h5>Producent: {{rower.producent}}, model: {{rower.model}}, typ: {{rower.typ}}, przebieg: {{rower.przebieg}} km</h5>

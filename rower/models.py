@@ -47,6 +47,7 @@ class Wycieczka(models.Model):
   def __unicode__(self):
     return self.nazwa
   
+  
 class Uzytkownik(models.Model):
   user = models.OneToOneField(User)
   nick = models.CharField(max_length=20)
@@ -60,6 +61,13 @@ class Uzytkownik(models.Model):
   def __unicode__(self):
     return self.nick
 
+class Statystyka(models.Model):
+  user = models.OneToOneField(Uzytkownik)
+  km = models.IntegerField()
+  
+  def __unicode__(self):
+    return self.user.nick
+    
 class Wpis(models.Model):
   tytul = models.CharField(max_length=40)
   data = models.DateField()

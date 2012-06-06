@@ -1,0 +1,10 @@
+{% extends "base2.html" %}
+
+{% block content %}
+	<ol>
+        {% for wpis in object_list %}
+            <li>{{wpis.user}}: {{wpis.km}} km</li>
+
+        {% endfor %}
+	</ol>
+{% endblock %}

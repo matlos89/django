@@ -109,10 +109,13 @@ ul li
 
 ol
 { margin: 8px 0px 0px 24px;
+
   padding: 0px;}
 
 ol li
-{ margin: 0px 0px 11px 0px; 
+{ margin: 0px 0px 11px 0px;
+  font: normal 145% 'century gothic', arial, sans-serif;
+  color: #B60000;
   padding: 0px;}
 
 #main, #logo, #menubar, #site_content, #footer
@@ -205,7 +208,7 @@ ul#menu li a:hover
   overflow: hidden;
   margin: 0 auto 0 auto;
   padding: 10px 20px 20px 20px;
-  background: #F6F6F0 url(back.png) repeat-y;
+  background: #F6F6F0;
   border: 15px solid #FFF;} 
 
 .sidebar
